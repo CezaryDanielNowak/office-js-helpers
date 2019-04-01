@@ -55,9 +55,17 @@ export class Storage<T> {
   switchStorage(type: StorageType) {
     switch (type) {
       case StorageType.LocalStorage:
-        this._storage = window.localStorage;
-        break;
-
+        try {
+          const key = this._scope('_testStorageSave');
+          this._storage = window.localStorage;
+          this._storage.setItem(key, key);
+          this._storage.removeItem(key);
+          break;
+        } catch(e) {
+          // do nothing.
+          // In case of error, `break` is never called and sessionStorage
+          // is set instead of localStorage.
+        }
       case StorageType.SessionStorage:
         this._storage = window.sessionStorage;
         break;
